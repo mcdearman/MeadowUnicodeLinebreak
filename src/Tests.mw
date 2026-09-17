@@ -1,0 +1,72 @@
+-- The port against the crate: every string in `Cases.mw`, whose expected break
+-- opportunities came from calling the crate itself, plus a few examples.
+--
+-- Every declaration carries `@cfg(test)`, as the tests are no part of the
+-- package.
+
+@cfg(test)
+use Std.Test (assertEq)
+@cfg(test)
+use Std.Collections.Vector as V
+@cfg(test)
+use unicodeLinebreak.Cases (cases)
+@cfg(test)
+use unicodeLinebreak.Break
+@cfg(test)
+use unicodeLinebreak.Break.BreakOpportunity.*
+
+@cfg(test)
+fun digit i = toInt (stringByteAt cases i) - 48
+
+@cfg(test)
+fun field i = (digit i * 64 + digit (i + 1)) * 64 + digit (i + 2)
+
+-- A break as the cases write it: twice its offset, plus one if mandatory.
+@cfg(test)
+fun encode brk =
+  match brk with
+  | (at, BreakOpportunity.Mandatory) -> 2 * at + 1
+  | (at, BreakOpportunity.Allowed) -> 2 * at
+
+@cfg(test)
+fun check at bad =
+  if at >= stringByteLength cases
+  then bad
+  else
+    let len = field at in
+    let s = stringSlice cases (at + 3) (at + 3 + len) in
+    let n = field (at + 3 + len) in
+    let first = at + 6 + len in
+    let breaks = V.map (\k -> field (first + 3 * k)) (V.range 0 n) in
+    let safe = field (first + 3 * n) in
+    let expected = (breaks, safe) in
+    let got = (V.map encode (linebreaks s), stringByteLength (fst (splitAtSafe s))) in
+    check (first + 3 * n + 3) (if got == expected then bad else V.pushBack bad (s, expected, got))
+
+-- Failures list (string, expected, actual), each answer being the breaks, as
+-- the cases encode them, and where `splitAtSafe` splits.
+@cfg(test)
+@test fun breaksMatchTheCrate () =
+  assertEq (V.take (check 0 V.empty) 5) [] "strings broken differently from the crate"
+
+@cfg(test)
+@test fun examples () =
+  let a =
+    assertEq
+      (linebreaks "a b \nc")
+      [(2, Allowed), (5, Mandatory), (6, Mandatory)]
+      "the crate's example"
+  in
+  let b = assertEq (breakProperty 0x2CF3) BreakClass.Alphabetic "a property" in
+  let c = assertEq (breakProperty 0xA) BreakClass.LineFeed "line feed" in
+  let d = assertEq (breakProperty 0xDB80) BreakClass.Surrogate "a surrogate" in
+  let e = assertEq (breakProperty 0xE01EF) BreakClass.CombiningMark "a variation selector" in
+  let f = assertEq (breakProperty 0x10FFFF) BreakClass.Unknown "unassigned" in
+  let g = assertEq (linebreaks "") [] "the empty string has no breaks, not even at its end" in
+  -- The crate's example: breaking the safe part finds the same breaks.
+  let s = "Not allowed to break within em dashes: — —" in
+  match splitAtSafe s with
+  | (prev, safe) ->
+      let n = stringByteLength prev in
+      let shifted = V.filter (\b -> fst b >= 0) (V.map (\b -> (fst b - n, snd b)) (linebreaks s)) in
+      assertEq (linebreaks safe) shifted "a safe split"

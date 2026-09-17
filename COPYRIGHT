@@ -1,0 +1,11 @@
+unicodeLinebreak is a port of the Rust crate unicode-linebreak
+(https://github.com/axelf4/unicode-linebreak), version 0.1.5, by Axel
+Forsman, to Meadow. Its tables and test cases are generated from that crate,
+and the code that drives the tables is translated from the crate's source.
+
+The crate is licensed under the Apache License, Version 2.0, and so is this
+port: see LICENSE, or http://www.apache.org/licenses/LICENSE-2.0.
+
+The data describes the Unicode Character Database, which is Copyright
+Unicode, Inc. and distributed under the Unicode License
+(https://www.unicode.org/license.txt).

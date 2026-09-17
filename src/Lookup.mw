@@ -1,0 +1,48 @@
+-- Reading the tables in `Tables.mw`.
+--
+-- Each table is a string of fixed-width records whose fields are base-64
+-- digits, `'0'` standing for 0 up to `'o'` for 63, most significant first. A
+-- digit is one byte, and `stringByteAt` reads a byte in constant time, so a
+-- lookup costs a few subtractions, or a binary search for the classes.
+--
+-- Copyright Axel Forsman, and the Meadow port's authors. Licensed under the
+-- Apache License, Version 2.0: see LICENSE and COPYRIGHT.
+
+use unicodeLinebreak.Tables
+
+-- `toInt` first: a byte is a `UInt8`, and arithmetic on it would wrap at 256.
+fun digit s i = toInt (stringByteAt s i) - 48
+
+fun pair s i = digit s i * 64 + digit s (i + 1)
+
+fun codePoint s i = pair s i * 4096 + pair s (i + 2)
+
+-- Where the record holding `cp` starts, or `0 - 1` when none does.
+fun searchFrom cp lo hi =
+  if lo >= hi
+  then 0 - 1
+  else
+    let mid = (lo + hi) / 2 in
+    let at = mid * 9 in
+    if cp < codePoint classes at
+    then searchFrom cp lo mid
+    else if cp > codePoint classes (at + 4)
+    then searchFrom cp (mid + 1) hi
+    else at
+
+-- The class numbered as `Tables.mw` lists them; 42 is Unknown.
+def unknown = 42
+
+-- The line break class of the code point `cp`, as its number.
+@pub(pkg) fun classOf cp =
+  let at = searchFrom cp 0 (stringByteLength classes / 9) in
+  if at < 0 then unknown else digit classes (at + 8)
+
+-- How many entries a row of the pair table has.
+def columns = 44
+
+-- The pair table's entry for `state` meeting class `cls`.
+@pub(pkg) fun transition state cls = pair pairs (2 * (state * columns + cls))
+
+-- Whether the classes `a` then `b` make a safe place to resume from.
+@pub(pkg) fun isSafePair a b = stringByteAt safePairs (a * (columns - 1) + b) == toUInt8 49
