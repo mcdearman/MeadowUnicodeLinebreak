@@ -10,7 +10,7 @@
 -- Apache License, Version 2.0: see LICENSE and COPYRIGHT.
 
 use Std.Collections.Vector as V
-use unicodeLinebreak.Lookup (classOf, transition, isSafePair)
+use UnicodeLinebreak.Lookup (classOf, transition, isSafePair)
 
 -- A line break class, as UAX #14 names them.
 @pub data BreakClass =

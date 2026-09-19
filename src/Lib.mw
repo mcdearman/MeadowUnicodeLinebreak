@@ -5,7 +5,7 @@
 -- 15.0.0. The tables are generated from the crate by `scripts/generate.sh`,
 -- and the tests hold this port to the crate's answers.
 --
---   use unicodeLinebreak (linebreaks)
+--   use UnicodeLinebreak (linebreaks)
 --
 --   linebreaks "Hello world!"  -- [(6, Allowed), (12, Mandatory)]
 
@@ -17,16 +17,16 @@ mod Cases
 @cfg(test)
 mod Tests
 
-@pub use unicodeLinebreak.Break (
+@pub use UnicodeLinebreak.Break (
   BreakClass,
   BreakOpportunity,
   breakProperty,
   linebreaks,
   splitAtSafe
 )
-@pub use unicodeLinebreak.Break.BreakOpportunity.*
+@pub use UnicodeLinebreak.Break.BreakOpportunity.*
 
-use unicodeLinebreak.Tables as T
+use UnicodeLinebreak.Tables as T
 
 -- The version of Unicode the tables follow, as `(major, minor, update)`.
 @pub def unicodeVersion = T.unicodeVersion

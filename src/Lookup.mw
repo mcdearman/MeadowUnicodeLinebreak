@@ -8,7 +8,7 @@
 -- Copyright Axel Forsman, and the Meadow port's authors. Licensed under the
 -- Apache License, Version 2.0: see LICENSE and COPYRIGHT.
 
-use unicodeLinebreak.Tables
+use UnicodeLinebreak.Tables
 
 -- `toInt` first: a byte is a `UInt8`, and arithmetic on it would wrap at 256.
 fun digit s i = toInt (stringByteAt s i) - 48

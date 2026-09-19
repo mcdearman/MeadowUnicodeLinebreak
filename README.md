@@ -6,19 +6,19 @@ Algorithm of [UAX #14](https://www.unicode.org/reports/tr14/).
 
 This package is a port of Rust's
 [`unicode-linebreak`](https://github.com/axelf4/unicode-linebreak) 0.1.5 by
-Axel Forsman, and covers Unicode 15.0.0. [textwrap](https://github.com/mcdearman/meadow-textwrap)
+Axel Forsman, and covers Unicode 15.0.0. [textwrap](https://github.com/mcdearman/MeadowTextwrap)
 uses it to find where it may break lines.
 
 ## Install
 
 ```sh
-meadow add mcdearman/meadow-unicode-linebreak
+meadow add mcdearman/MeadowUnicodeLinebreak
 ```
 
 ## Use
 
 ```meadow
-use unicodeLinebreak (linebreaks, breakProperty, BreakClass)
+use UnicodeLinebreak (linebreaks, breakProperty, BreakClass)
 
 def main =
   ( linebreaks "a b \nc",
@@ -36,7 +36,7 @@ def main =
 
 `BreakOpportunity`'s constructors, `Allowed` and `Mandatory`, are exported
 bare. `BreakClass`'s constructors are written `BreakClass.Alphabetic` and so
-on, unless you `use unicodeLinebreak.BreakClass.*`.
+on, unless you `use UnicodeLinebreak.BreakClass.*`.
 
 As in the crate, Complex-Context Dependent characters (Thai, Lao, Khmer, …)
 are treated as ordinary letters. Finding breaks inside words in those scripts

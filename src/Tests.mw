@@ -9,11 +9,11 @@ use Std.Test (assertEq)
 @cfg(test)
 use Std.Collections.Vector as V
 @cfg(test)
-use unicodeLinebreak.Cases (cases)
+use UnicodeLinebreak.Cases (cases)
 @cfg(test)
-use unicodeLinebreak.Break
+use UnicodeLinebreak.Break
 @cfg(test)
-use unicodeLinebreak.Break.BreakOpportunity.*
+use UnicodeLinebreak.Break.BreakOpportunity.*
 
 @cfg(test)
 fun digit i = toInt (stringByteAt cases i) - 48
